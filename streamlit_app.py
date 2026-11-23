@@ -213,8 +213,8 @@ def message_text(event) -> str:
 
 
 def escape_dollars(text: str) -> str:
-    """Streamlit's markdown shows text between two $ signs as maths, so "$2.50 a mile, $25.00 in total" would
-    lose its $ signs. Escaping them keeps prices as they are."""
+    """Streamlit's markdown shows text between two $ signs as maths. Our prices are in pounds, but a customer or
+    the model can still write $ (say, "$40 or $50"), so escape it to show the text as it is."""
     return text.replace("$", "\\$")
 
 
@@ -297,8 +297,8 @@ def taxi_cards(options: list[dict], key: str, can_choose: bool) -> None:
                     st.image(picture, use_container_width=True)
                 else:
                     st.markdown("## 🚕")
-                st.markdown(escape_dollars(f"**{name}**  \n:material/group: Up to {taxi['max_passengers']}  \n"
-                                           f"${taxi['rate_per_mile']:.2f} a mile"))
+                st.markdown(f"**{name}**  \n:material/group: Up to {taxi['max_passengers']}  \n"
+                            f"£{taxi['rate_per_mile']:.2f} a mile")
                 if can_choose and st.button("Choose", key=f"choose_{key}_{name}", width="stretch"):
                     st.session_state.chosen_taxi = f"I'd like the {name}."
                     st.rerun()  # reruns the whole page, not just the chat fragment, so chat_panel sends it
@@ -522,7 +522,7 @@ def admin_panel() -> None:
             table(bookings, "No bookings yet.", {
                 "confirmation_number": st.column_config.NumberColumn("No.", format="%d", width="small"),
                 "customer_name": "Customer", "pickup_datetime": "Pickup", "status": "Status",
-                "fare": st.column_config.NumberColumn("Fare", format="$%.2f"),
+                "fare": st.column_config.NumberColumn("Fare", format="£%.2f"),
                 "taxi_type": "Taxi", "passengers": st.column_config.NumberColumn("Passengers", format="%d"),
                 "source": "From", "destination": "To",
                 "distance_miles": st.column_config.NumberColumn("Miles", format="%.1f"),
@@ -539,8 +539,8 @@ def admin_panel() -> None:
             table(taxis, "No taxi types yet.", {
                 "taxi_type": "Taxi",
                 "max_passengers": st.column_config.NumberColumn("Passengers", format="%d"),
-                "business_rate_per_mile": st.column_config.NumberColumn("Business, per mile", format="$%.2f"),
-                "personal_rate_per_mile": st.column_config.NumberColumn("Personal, per mile", format="$%.2f"),
+                "business_rate_per_mile": st.column_config.NumberColumn("Business, per mile", format="£%.2f"),
+                "personal_rate_per_mile": st.column_config.NumberColumn("Personal, per mile", format="£%.2f"),
             })
         with tabs[3]:
             table([{key: r[key] for key in ("request_id", "action", "summary", "status", "representative_message",

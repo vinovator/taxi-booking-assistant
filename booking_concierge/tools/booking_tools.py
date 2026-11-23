@@ -104,6 +104,11 @@ def _taxi_label(taxi_type: str, passengers: int) -> str:
     return f"{taxi_type} · {passengers} passenger{'' if passengers == 1 else 's'}"
 
 
+def _pounds(amount: float) -> str:
+    """An amount of money for people to read, in pounds, e.g. "£45.00"."""
+    return f"£{amount:.2f}"
+
+
 def _change(before: str, after: str) -> str:
     """Show a change as "before → after", or just the value if it didn't change."""
     return after if before == after else f"{before} → {after}"
@@ -135,13 +140,13 @@ def _taxi_problem(taxi: dict | None, taxi_type: str, passengers: int, customer_t
         return f"{too_small} None of our taxis carries {passengers} passengers, so suggest booking two taxis."
     best = fits[0]  # list_taxi_types is cheapest first
     return (f"{too_small} Suggest the {best['taxi_type']} instead: it carries up to {best['max_passengers']} "
-            f"passengers, at ${best['rate_per_mile']:.2f} a mile.")
+            f"passengers, at {_pounds(best['rate_per_mile'])} a mile.")
 
 
 def list_taxi_types(tool_context: ToolContext) -> list[dict] | str:
     """
     List the taxi types the customer can choose from: how many passengers each one carries, and its price per
-    mile for this customer. The web chat shows them to the customer as cards with pictures.
+    mile for this customer, in pounds (£). The web chat shows them to the customer as cards with pictures.
 
     Returns:
         list: One entry per taxi type, cheapest first, with taxi_type, max_passengers and rate_per_mile,
@@ -162,7 +167,7 @@ def calculate_total_fare(distance: float, taxi_type: str, tool_context: ToolCont
         taxi_type (str): The taxi type the customer chose, e.g. Sedan (one of the types from list_taxi_types)
 
     Returns:
-        float: The total fare, or a message if it can't be calculated.
+        float: The total fare in pounds (£), or a message if it can't be calculated.
     """
     customer_type = tool_context.state.get("customer_type")
     if customer_type is None:
@@ -230,7 +235,7 @@ def confirm_booking(source: str, destination: str, distance: float, pickup_date:
             "pickup": _when(pickup),
             "pickup_at": pickup.strftime(PICKUP_FORMAT),
             "taxi": _taxi_label(taxi["taxi_type"], passengers),
-            "note": f"{distance:.1f} miles · ${fare:.2f}",
+            "note": f"{distance:.1f} miles · {_pounds(fare)}",
         })
         if waiting:
             return waiting
@@ -248,7 +253,7 @@ def confirm_booking(source: str, destination: str, distance: float, pickup_date:
         f"Distance: {distance:.2f} miles\n"
         f"Pickup Date: {pickup:%A %Y-%m-%d}\n"
         f"Pickup Time: {pickup:%H:%M}\n"
-        f"Total Fare: ${fare:.2f}\n"
+        f"Total Fare: {_pounds(fare)}\n"
         f"Confirmation Number: {confirmation_number}"
     )
     return confirmation_message
@@ -262,7 +267,7 @@ def lookup_booking_details(confirmation_number: int, tool_context: ToolContext) 
         confirmation_number (int): The booking confirmation number
 
     Returns:
-        dict: The booking details, or a message if no booking was found.
+        dict: The booking details (its fare is in pounds, £), or a message if no booking was found.
     """
     customer_id = tool_context.state.get("customer_id")
     if customer_id is None:
@@ -333,7 +338,7 @@ def modify_booking(confirmation_number: int, tool_context: ToolContext,
             "pickup_at": min(current, pickup).strftime(PICKUP_FORMAT),
             "taxi": _change(_taxi_label(booking["taxi_type"], booking["passengers"]),
                             _taxi_label(taxi["taxi_type"], passengers)),
-            "note": f"Booking {confirmation_number} · " + _change(f"${booking['fare']:.2f}", f"${fare:.2f}"),
+            "note": f"Booking {confirmation_number} · " + _change(_pounds(booking["fare"]), _pounds(fare)),
         })
         if waiting:
             return waiting
@@ -341,7 +346,7 @@ def modify_booking(confirmation_number: int, tool_context: ToolContext,
     db.change_booking(confirmation_number, customer_id, pickup.strftime(PICKUP_FORMAT),
                       taxi["taxi_type"], passengers, fare)
     return (f"Booking {confirmation_number} has been changed. Pickup: {pickup:%A %Y-%m-%d %H:%M}. "
-            f"Taxi: {_taxi_label(taxi['taxi_type'], passengers)}. Fare: ${fare:.2f}.")
+            f"Taxi: {_taxi_label(taxi['taxi_type'], passengers)}. Fare: {_pounds(fare)}.")
 
 
 def cancel_booking(confirmation_number: int, tool_context: ToolContext) -> str:
@@ -378,7 +383,7 @@ def cancel_booking(confirmation_number: int, tool_context: ToolContext) -> str:
             "pickup": _when(pickup),
             "pickup_at": pickup.strftime(PICKUP_FORMAT),
             "taxi": _taxi_label(booking["taxi_type"], booking["passengers"]),
-            "note": f"Booking {confirmation_number} · ${booking['fare']:.2f}",
+            "note": f"Booking {confirmation_number} · {_pounds(booking['fare'])}",
         })
         if waiting:
             return waiting

@@ -11,7 +11,8 @@ booking_agent = Agent(
     taxi type, calculate rates for the source and destination provided, confirm booking.""",
     instruction="""
     Role: You are a professional taxi booking agent that helps business and personal customers make enquiries about taxi,
-    calculate rates for the source and destination provided, and confirm booking.
+    calculate rates for the source and destination provided, and confirm booking. We're a UK taxi company: prices
+    and fares are in pounds (£).
 
     Customer details (saved in session state by booking_concierge):
     - Name: {customer_name?}

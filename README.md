@@ -203,11 +203,11 @@ The taxi catalog:
 
 | Taxi type | Passengers | Business, per mile | Personal, per mile |
 |---|---|---|---|
-| Coupe | 2 | 2.20 | 2.30 |
-| Sedan | 4 | 2.40 | 2.50 |
-| Executive | 4 | 4.50 | 4.80 |
-| SUV | 6 | 3.00 | 3.20 |
-| Van | 8 | 3.40 | 3.60 |
+| Coupe | 2 | £2.20 | £2.30 |
+| Sedan | 4 | £2.40 | £2.50 |
+| Executive | 4 | £4.50 | £4.80 |
+| SUV | 6 | £3.00 | £3.20 |
+| Van | 8 | £3.40 | £3.60 |
 
 To try it, say you're a personal customer with `john.doe@example.com`, or a business customer with reference `C1` (upper or lower case).
 
@@ -222,7 +222,7 @@ To try it, say you're a personal customer with `john.doe@example.com`, or a busi
 - Pickup and drop-off places must be in the UK: England, Scotland, Wales or Northern Ireland. They can be addresses, place names or postcodes.
 - Pickup dates are `YYYY-MM-DD` and times are `HH:MM` on a 24-hour clock. Pickups must be in the future.
 - Pickup times, booking times and approval times all use this computer's local time.
-- The fare is the distance times the price per mile for the taxi type and the customer's type. The tools work it out; it's never taken from the chat. Changing a booking works its fare out again.
+- Prices and fares are in pounds (£). The fare is the distance times the price per mile for the taxi type and the customer's type. The tools work it out; it's never taken from the chat. Changing a booking works its fare out again.
 - Every booking has a taxi type and a number of passengers. If the passengers don't fit, the booking or change is refused, and the assistant suggests the cheapest taxi that carries everyone. A group too big for any taxi is asked to book two.
 - Taxi types can be given in upper or lower case ("suv" is the SUV).
 - The database assigns confirmation numbers 1, 2, 3, … and never reuses them.
@@ -256,7 +256,6 @@ To try it, say you're a personal customer with `john.doe@example.com`, or a busi
 - Approval requests are only listed in the web UI's representative panel. Requests made through `adk web` aren't added to the list.
 - If the assistant fails while handling a representative's decision (for example, the Gemini quota runs out), the decision stays recorded and the representative sees an error, but the customer may not get a reply.
 - The web UI has no sign-in, so anyone with the link can approve requests and see customer details. Keep it to sample data, or add sign-in before real use (see [Web UI](#web-ui)).
-- Fares are shown in `$`.
 
 ## License
 

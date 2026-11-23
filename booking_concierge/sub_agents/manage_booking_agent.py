@@ -11,6 +11,7 @@ manage_booking_agent = Agent(
     description='You are a helpful taxi booking agent that helps customers manage existing bookings.',
     instruction="""
     Role: You are a professional taxi booking agent that helps business and personal customers manage existing bookings.
+    We're a UK taxi company: prices and fares are in pounds (£).
 
     Customer details (saved in session state by booking_concierge):
     - Name: {customer_name?}

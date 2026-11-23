@@ -1,0 +1,5 @@
+# Python 3.10 or newer (tested with Python 3.12)
+google-adk==2.5.0       # the agents
+google-genai==2.12.1    # imported directly by streamlit_app.py (also installed by google-adk)
+python-dotenv==1.1.1    # reads booking_concierge/.env when running locally
+streamlit==1.48.1       # the web UI

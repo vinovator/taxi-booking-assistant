@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" width="240" height="140" role="img" aria-label="Executive car">
+  <title>Executive</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="paint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#334155"/>
+      <stop offset=".45" stop-color="#111827"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="tint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#64748B"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="140" rx="18" fill="url(#bg)"/>
+  <ellipse cx="120" cy="122" rx="108" ry="6" fill="#0F172A" opacity=".16"/>
+
+  <path d="M12,104 L12,88 Q12,80 20,78 L66,74 L88,52 Q92,48 99,48 L150,48 Q157,48 162,53 L186,73 L218,77 Q228,79 228,89 L228,102 Q228,108 222,108 L18,108 Q12,108 12,104 Z" fill="url(#paint)"/>
+  <path d="M75,72 L91,55 Q94,52 99,52 L125,52 L125,72 Z" fill="url(#tint)" stroke="#CBD5E1" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M131,52 L150,52 Q155,52 158,56 L174,72 L131,72 Z" fill="url(#tint)" stroke="#CBD5E1" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M22,84 L218,84" stroke="#F59E0B" stroke-width="1.2" opacity=".9"/>
+  <rect x="36" y="94" width="168" height="2" rx="1" fill="#94A3B8"/>
+  <g stroke="#475569" stroke-width="1.2" fill="none">
+    <path d="M73,75 L73,104"/>
+    <path d="M128,75 L128,104"/>
+    <path d="M178,75 L178,100"/>
+  </g>
+  <rect x="110" y="78" width="10" height="3" rx="1.5" fill="#CBD5E1"/>
+  <rect x="160" y="78" width="10" height="3" rx="1.5" fill="#CBD5E1"/>
+
+  <rect x="218" y="82" width="10" height="6" rx="2" fill="#E0F2FE"/>
+  <rect x="12" y="82" width="6" height="6" rx="1.5" fill="#EF4444"/>
+  <rect x="8" y="98" width="16" height="6" rx="3" fill="#94A3B8"/>
+  <rect x="216" y="98" width="16" height="6" rx="3" fill="#94A3B8"/>
+
+  <path d="M42,106 A18,18 0 0 1 78,106 Z" fill="#000000" opacity=".5"/>
+  <path d="M168,106 A18,18 0 0 1 204,106 Z" fill="#000000" opacity=".5"/>
+  <circle cx="60" cy="106" r="15" fill="#0B0F19"/>
+  <circle cx="60" cy="106" r="9" fill="#E5E7EB"/>
+  <circle cx="60" cy="106" r="5.5" fill="#94A3B8"/>
+  <circle cx="60" cy="106" r="2" fill="#E5E7EB"/>
+  <circle cx="186" cy="106" r="15" fill="#0B0F19"/>
+  <circle cx="186" cy="106" r="9" fill="#E5E7EB"/>
+  <circle cx="186" cy="106" r="5.5" fill="#94A3B8"/>
+  <circle cx="186" cy="106" r="2" fill="#E5E7EB"/>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" width="240" height="140" role="img" aria-label="Van taxi">
+  <title>Van</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#DBEAFE"/>
+      <stop offset="1" stop-color="#93C5FD"/>
+    </linearGradient>
+    <pattern id="check" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#111827"/>
+      <rect width="3" height="3" fill="#FFFFFF"/>
+      <rect x="3" y="3" width="3" height="3" fill="#FFFFFF"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="140" rx="18" fill="url(#bg)"/>
+  <ellipse cx="120" cy="122" rx="110" ry="6" fill="#0F172A" opacity=".12"/>
+
+  <rect x="80" y="11" width="34" height="11" rx="3" fill="#111827"/>
+  <text x="97" y="19.5" font-family="Arial, Helvetica, sans-serif" font-size="8.5" font-weight="700" letter-spacing=".5" text-anchor="middle" fill="#FACC15">TAXI</text>
+
+  <path d="M12,100 L12,32 Q12,22 22,22 L168,22 Q178,22 184,30 L204,58 L216,62 Q228,65 228,78 L228,100 Q228,106 222,106 L18,106 Q12,106 12,100 Z" fill="#FACC15"/>
+  <path d="M12,99 L228,99 L228,100 Q228,106 222,106 L18,106 Q12,106 12,100 Z" fill="#EAB308"/>
+  <rect x="20" y="30" width="38" height="26" rx="3" fill="url(#glass)"/>
+  <rect x="64" y="30" width="38" height="26" rx="3" fill="url(#glass)"/>
+  <rect x="110" y="30" width="42" height="26" rx="3" fill="url(#glass)"/>
+  <path d="M158,30 L174,30 Q179,30 182,34 L197,56 L158,56 Z" fill="url(#glass)"/>
+  <rect x="18" y="72" width="132" height="6" fill="url(#check)"/>
+  <g stroke="#CA8A04" stroke-width="1.2" fill="none">
+    <path d="M106,58 L106,102"/>
+    <path d="M155,58 L155,102"/>
+    <path d="M201,62 L201,98"/>
+  </g>
+  <path d="M106,60 L155,60" stroke="#A16207" stroke-width="2"/>
+  <rect x="140" y="65" width="10" height="3" rx="1.5" fill="#A16207"/>
+  <rect x="186" y="65" width="10" height="3" rx="1.5" fill="#A16207"/>
+
+  <rect x="219" y="68" width="9" height="7" rx="2" fill="#FEF3C7"/>
+  <rect x="12" y="60" width="6" height="16" rx="2" fill="#EF4444"/>
+  <rect x="8" y="96" width="16" height="8" rx="4" fill="#374151"/>
+  <rect x="216" y="96" width="16" height="8" rx="4" fill="#374151"/>
+
+  <path d="M33,105 A19,19 0 0 1 71,105 Z" fill="#A16207" opacity=".45"/>
+  <path d="M171,105 A19,19 0 0 1 209,105 Z" fill="#A16207" opacity=".45"/>
+  <circle cx="52" cy="105" r="16" fill="#1F2937"/>
+  <circle cx="52" cy="105" r="8" fill="#CBD5E1"/>
+  <circle cx="52" cy="105" r="2.8" fill="#64748B"/>
+  <circle cx="190" cy="105" r="16" fill="#1F2937"/>
+  <circle cx="190" cy="105" r="8" fill="#CBD5E1"/>
+  <circle cx="190" cy="105" r="2.8" fill="#64748B"/>
+</svg>

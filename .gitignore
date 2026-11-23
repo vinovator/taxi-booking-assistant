@@ -1,0 +1,22 @@
+# API keys
+.env
+
+# Streamlit secrets: the Gemini API key
+.streamlit/secrets.toml
+
+# ADK's local session store: conversation history and session state, including customer details
+.adk/
+
+# SQLite databases: taxi.db with customer and booking data (rebuilt from data/schema.sql and data/seed.sql),
+# and sessions.db with the web UI's conversations
+*.db
+*.db-journal
+
+# Python bytecode and virtual environment
+__pycache__/
+*.pyc
+.venv/
+
+# Editor settings and macOS Finder files
+.vscode/
+.DS_Store

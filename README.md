@@ -1,6 +1,6 @@
 # Taxi Booking Assistant
 
-A taxi booking assistant built with [Google's Agent Development Kit (ADK)](https://google.github.io/adk-docs/) and Gemini. It identifies business and personal customers, offers a catalog of taxi types, quotes fares, takes bookings, and lets customers look up, change or cancel them. Short-notice requests go to a taxi company representative for approval. Customer and booking data are stored in a local SQLite database.
+A taxi booking assistant built with [Google's Agent Development Kit (ADK)](https://google.github.io/adk-docs/) and Gemini. It identifies business and personal customers, measures driving distances with Google Maps, offers a catalog of taxi types, quotes fares, takes bookings, and lets customers look up, change or cancel them. Short-notice requests go to a taxi company representative for approval. Customer and booking data are stored in a local SQLite database.
 
 A Streamlit web UI shows three personas side by side: a customer chatting with the assistant, a taxi company representative approving requests, and a company admin watching operations.
 
@@ -11,7 +11,7 @@ Three agents share one conversation and one session state:
 | Agent | What it does | Tools |
 |---|---|---|
 | `booking_concierge` (root) | Greets the caller and works out who they are, then hands over. Business customers give a company reference number, then the passenger's name, email and phone number. Personal customers give their email, or sign up. Callers with no upcoming bookings, such as new customers, go straight to `booking_agent`; the others are asked whether they want a new booking or to manage one, unless they've already said. | `lookup_company_details`, `add_business_customer_details`, `lookup_personal_customer_details`, `add_personal_customer_details` |
-| `booking_agent` | Shows the taxi catalog, quotes the fare and confirms new bookings. | `calculate_distance`, `list_taxi_types`, `calculate_total_fare`, `confirm_booking` |
+| `booking_agent` | Measures the trip with Google Maps, shows the taxi catalog, quotes the fare and confirms new bookings. | `calculate_distance`, `list_taxi_types`, `calculate_total_fare`, `confirm_booking` |
 | `manage_booking_agent` | Looks up, changes or cancels the caller's existing bookings. A change can be the pickup time, the taxi type or the number of passengers. | `lookup_booking_details`, `modify_booking`, `cancel_booking`, `list_taxi_types`, `calculate_total_fare` |
 
 **Session state.** As soon as a customer tool finds or registers the caller, it saves their details in session state: `customer_id`, `customer_type`, `company_reference_number`, `company_name`, `customer_name`, `email` and `phone_number`. Before every turn, `booking_agent` and `manage_booking_agent` also save the current date and time as `current_time` (`remember_current_time` in `tools/booking_tools.py`), so the model can turn "tomorrow" or "in two hours" into a real date and time.
@@ -77,6 +77,18 @@ Customers choose a taxi type for each booking: Coupe, Sedan, Executive, SUV or V
 3. **The passenger limit is a rule in code, not in a prompt.** `confirm_booking` and `modify_booking` check it with `_taxi_problem()`, before anything is saved or sent for approval. If the taxi is too small, nothing changes, and the tool suggests the cheapest taxi that carries everyone, for example "A Coupe carries up to 2 passengers, so it can't take 3. Suggest the Sedan instead". The prompts only tell the agents to offer that suggestion.
 4. **A price depends on two things.** The `rates` table has one row for each taxi type and customer type, so its key is both columns. The tools look the price up themselves, so the fare never comes from the chat.
 
+## How distances work
+
+`calculate_distance` in `tools/maps_mcp.py` measures each trip with [Google Maps' MCP server](https://developers.google.com/maps/ai/grounding-lite) ("Maps Experience agent tools"). It also checks that both places are in the UK, with [postcodes.io](https://postcodes.io), a free service built on official ONS and Ordnance Survey data.
+
+1. **Postcodes** are looked up on postcodes.io. They must exist, and be in England, Scotland, Wales or Northern Ireland.
+2. **Other places**, such as addresses, stations and airports, are found with Google's `search_places`. Google doesn't say which country a place is in, so postcodes.io must find a UK postcode within 2 km of it.
+3. **The distance** comes from Google's `compute_routes`, driving. Google gives metres, and the tool converts them to miles.
+
+The tool is an MCP client. `_google_maps()` opens a session with Google's server over HTTP, sending the key in the `X-Goog-Api-Key` header, and `_call_tool()` calls Google's tools through it. ADK's `McpToolset` could give Google's tools to the agent directly instead. But then the model would get metres and convert them itself, and there'd be nowhere to check the places are in the UK.
+
+If a place isn't in the UK, or isn't a real postcode, the agent tells the customer and asks for another. When it quotes a distance, it says it's from Google Maps, as Google's terms require.
+
 ## Project structure
 
 ```
@@ -87,11 +99,12 @@ taxi-booking-assistant/
 ├── requirements.txt
 ├── streamlit_app.py              # web UI: customer chat, representative, admin
 ├── .streamlit/config.toml        # the web UI's theme: colours, corners, menu
-├── .streamlit/secrets.toml       # optional: the API key for the web UI (not committed)
+├── .streamlit/secrets.toml       # optional: the API keys for the web UI (not committed)
 ├── images/                       # a picture for each taxi type, named after it, e.g. suv.svg
 └── booking_concierge/            # the ADK app
     ├── __init__.py
-    ├── .env                      # your API key (not committed)
+    ├── .env.example              # a template for .env
+    ├── .env                      # your API keys (not committed)
     ├── .adk/                     # conversations saved by adk web (not committed)
     ├── agent.py                  # root agent; creates the database on start
     ├── sub_agents/
@@ -100,7 +113,7 @@ taxi-booking-assistant/
     ├── tools/
     │   ├── customer_tools.py     # identify customers and save them in session state
     │   ├── booking_tools.py      # fares, bookings, date and time checks, approvals
-    │   └── maps_mcp.py           # distance between two places (placeholder)
+    │   └── maps_mcp.py           # driving distances from Google Maps' MCP server; UK checks
     └── data/
         ├── database.py           # the only code that talks to SQLite
         ├── schema.sql            # tables
@@ -111,21 +124,26 @@ taxi-booking-assistant/
 
 ## Setup
 
-You need Python 3.10 or newer and a Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey).
+You need Python 3.10 or newer, a Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey), and a Google Maps API key for driving distances.
 
 ```bash
+git clone https://github.com/vinovator/taxi-booking-assistant.git
 cd taxi-booking-assistant
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create `booking_concierge/.env` containing:
+Copy the template to `booking_concierge/.env`, then put your Gemini key in `GOOGLE_API_KEY` and your Google Maps key in `GOOGLE_MAPS_API_KEY`:
 
+```bash
+cp booking_concierge/.env.example booking_concierge/.env
 ```
-GOOGLE_GENAI_USE_ENTERPRISE=0
-GOOGLE_API_KEY=your-api-key
-```
+
+If you leave `GOOGLE_MAPS_API_KEY` empty, every trip is estimated at 10 miles. To get a Google Maps key:
+
+- **For testing:** a free [Maps Demo Key](https://developers.google.com/maps/demo-key). Sign in with a personal Google account (not a Workspace one), click **Get a Demo Key**, and accept the terms. It needs no billing account, and it pauses for the day when it reaches its daily limit.
+- **For real use:** in the [Google Cloud console](https://console.cloud.google.com), choose a project with billing turned on, and enable the [Maps Experience agent tools API](https://console.cloud.google.com/apis/library/mapstools.googleapis.com). Then create an API key under **APIs & Services → Credentials**, and restrict it to that API. The first 10,000 requests a month of each Google tool are free.
 
 ## Run
 
@@ -164,9 +182,10 @@ To try the passenger limit, choose a Coupe for 3 passengers. The assistant refus
 
 1. Push the project to GitHub. `.env`, `secrets.toml` and the databases are excluded by `.gitignore`.
 2. On [share.streamlit.io](https://share.streamlit.io), create an app: choose your repository, the branch, and `streamlit_app.py` as the main file.
-3. Under advanced settings, choose Python 3.12, and paste your secret:
+3. Under advanced settings, choose Python 3.12, and paste your secrets:
    ```toml
-   GOOGLE_API_KEY = "your-api-key"
+   GOOGLE_API_KEY = "your-gemini-api-key"
+   GOOGLE_MAPS_API_KEY = "your-google-maps-api-key"
    ```
 4. Deploy, and share the app's URL.
 
@@ -200,6 +219,7 @@ To try it, say you're a personal customer with `john.doe@example.com`, or a busi
 
 ## Booking rules
 
+- Pickup and drop-off places must be in the UK: England, Scotland, Wales or Northern Ireland. They can be addresses, place names or postcodes.
 - Pickup dates are `YYYY-MM-DD` and times are `HH:MM` on a 24-hour clock. Pickups must be in the future.
 - Pickup times, booking times and approval times all use this computer's local time.
 - The fare is the distance times the price per mile for the taxi type and the customer's type. The tools work it out; it's never taken from the chat. Changing a booking works its fare out again.
@@ -215,17 +235,22 @@ To try it, say you're a personal customer with `john.doe@example.com`, or a busi
 - **Taxi catalog and prices:** the `taxi_types` and `rates` tables, filled in from `seed.sql`. To add a taxi type, add it to `taxi_types` with a price for each customer type in `rates`, and save a picture named after it in `images/` (for example `limo.svg`). A taxi type with no picture shows a 🚕.
 - **Pictures:** `images/` holds a drawing for each taxi type. To use a photo instead, save it with the same name (`sedan.png` or `sedan.jpg`); a photo is used before the drawing.
 - **Approval window:** 24 hours, set in `_within_24_hours` in `tools/booking_tools.py`.
+- **Distances:** `tools/maps_mcp.py`. Trips are driven (`travelMode: "DRIVE"`), and a place counts as in the UK when it has a UK postcode within 2 km.
 
 ## Troubleshooting
 
 - **`429 RESOURCE_EXHAUSTED`:** you've used up your Gemini API quota. Free-tier limits are low, and each message can use several requests. Check your usage at https://ai.dev/rate-limit, then wait for the limit to reset or enable billing.
 - **Database errors after editing `schema.sql`:** start the database over (see above).
 - **`table rates has no column named taxi_type` on start:** your `taxi.db` was made before the taxi catalog was added. Start the database over (see above), deleting `sessions.db` too.
+- **The assistant says distances aren't available:** the tool's message ends with the reason. `400 Bad Request` means Google didn't accept the key, so check `GOOGLE_MAPS_API_KEY`. `403 Forbidden` usually means the Maps Experience agent tools API isn't enabled for the key, and `All connection attempts failed` means you're offline. A Demo Key also stops for the day when it reaches its daily limit.
 - **`Event from an unknown agent` warnings in the console:** harmless. They appear when a representative's decision is sent through a sub-agent's runner, which only knows its own agent.
 
 ## Known limitations
 
-- Distance is a placeholder: `calculate_distance` always returns 10 miles.
+- Without `GOOGLE_MAPS_API_KEY`, every trip is estimated at 10 miles.
+- Google Maps Platform's terms only allow these tools with an LLM that doesn't use your inputs for training. Gemini's free tier may use prompts to improve Google's products, and its paid tier doesn't, so turn on billing for your Gemini project before real use.
+- Distances need internet access, and postcodes.io is a free service with fair-use limits. A place more than 2 km from any UK postcode, such as somewhere remote in the Highlands, is treated as outside the UK.
+- `confirm_booking` uses the distance the agent passes on from `calculate_distance`, rather than measuring the trip again.
 - Callers aren't verified. Anyone who knows a customer's email or a company reference number can act as that customer.
 - The sub-agents rely on their prompts to hand an unidentified caller back to `booking_concierge`. The tools still refuse to act until a customer is identified.
 - Approval requests are only listed in the web UI's representative panel. Requests made through `adk web` aren't added to the list.

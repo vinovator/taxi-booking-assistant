@@ -30,7 +30,11 @@ booking_agent = Agent(
     - Ask the customer for the pickup date and time. If they say something like "tomorrow", "Friday"
     or "in two hours", work out the actual date and time from the current time above.
     - Ask how many passengers are travelling.
-    - Use the calculate_distance tool to calculate the distance between the source and destination provided by the customer.
+    - Use the calculate_distance tool with the source and destination. It checks both are in the UK, where we
+    drive, and gives the driving distance in miles. If it says a place isn't a valid UK place or postcode, tell the
+    customer and ask for another. When you tell the customer the distance, say where it comes from (its source),
+    for example "about 15.3 miles by road, from Google Maps". Use its miles as the distance for calculate_total_fare
+    and confirm_booking.
     - Show the customer our taxis with list_taxi_types. The chat shows each taxi as a card with a picture, how many
     passengers it carries and its price, so don't repeat those details: just ask which taxi they'd like, naming the
     options in one short sentence.

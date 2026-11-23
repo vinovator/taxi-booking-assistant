@@ -145,12 +145,13 @@ def secret(name: str) -> str | None:
         return None
 
 
-# The Gemini API key comes from Streamlit's secrets when deployed, or from booking_concierge/.env locally.
-if secret("GOOGLE_API_KEY"):
-    os.environ["GOOGLE_API_KEY"] = secret("GOOGLE_API_KEY")
-    os.environ.setdefault("GOOGLE_GENAI_USE_ENTERPRISE", "0")
-else:
-    load_dotenv(Path(__file__).parent / APP_NAME / ".env")
+# The API keys, for Gemini and for Google Maps' distances, come from Streamlit's secrets when deployed, or from
+# booking_concierge/.env locally. Secrets win; .env only fills in what they don't set.
+for name in ("GOOGLE_API_KEY", "GOOGLE_MAPS_API_KEY"):
+    if secret(name):
+        os.environ[name] = secret(name)
+load_dotenv(Path(__file__).parent / APP_NAME / ".env")
+os.environ.setdefault("GOOGLE_GENAI_USE_ENTERPRISE", "0")
 
 
 @st.cache_resource

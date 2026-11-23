@@ -1,5 +1,7 @@
 # Python 3.10 or newer (tested with Python 3.12)
 google-adk==2.5.0       # the agents
 google-genai==2.12.1    # imported directly by streamlit_app.py (also installed by google-adk)
+httpx==0.28.1           # calls postcodes.io and Google Maps' MCP server (also installed by google-adk)
+mcp==1.25.0             # talks to Google Maps' MCP server (google-adk only installs it with its "mcp" extra)
 python-dotenv==1.1.1    # reads booking_concierge/.env when running locally
 streamlit==1.48.1       # the web UI

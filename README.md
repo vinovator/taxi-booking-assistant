@@ -4,6 +4,8 @@ A taxi booking assistant built with [Google's Agent Development Kit (ADK)](https
 
 A Streamlit web UI shows three personas side by side: a customer chatting with the assistant, a taxi company representative approving requests, and a company admin watching operations.
 
+**Try it live at [taxi-booking-assistant.streamlit.app](https://taxi-booking-assistant.streamlit.app/).** It runs on sample data: say you're a personal customer with `john.doe@example.com`, or a business customer with company reference `C1`. Everyone who opens it shares the same data, which goes back to the start whenever the app restarts. If nobody has used it for a while, click the button to wake it up; that takes a minute or so.
+
 ## How it works
 
 Three agents share one conversation and one session state:
@@ -179,6 +181,8 @@ To try an approval:
 To try the passenger limit, choose a Coupe for 3 passengers. The assistant refuses it and suggests a Sedan.
 
 ## Deploying the web UI to Streamlit Community Cloud
+
+This project's web UI is deployed this way at [taxi-booking-assistant.streamlit.app](https://taxi-booking-assistant.streamlit.app/). To deploy your own copy:
 
 1. Push the project to GitHub. `.env`, `secrets.toml` and the databases are excluded by `.gitignore`.
 2. On [share.streamlit.io](https://share.streamlit.io), create an app: choose your repository, the branch, and `streamlit_app.py` as the main file.

@@ -53,7 +53,8 @@ st.set_page_config(page_title="Taxi Booking Assistant", page_icon="🚕", layout
 
 STYLE = """
 <style>
-[data-testid="stMainBlockContainer"] { padding: 1rem 1.5rem; max-width: 1720px; }
+/* 4rem at the top clears Streamlit's top bar, which shows Fork and GitHub buttons on Streamlit Community Cloud */
+[data-testid="stMainBlockContainer"] { padding: 4rem 1.5rem 1rem; max-width: 1720px; }
 
 /* Header banner: one slim row, so the panels get most of the screen */
 .tba-hero { display: flex; align-items: center; justify-content: space-between; gap: .75rem 1.5rem;
@@ -82,17 +83,17 @@ STYLE = """
    the panels sit side by side, the other two panels do the same. Each panel's main area (chat_messages,
    representative_body or admin_body) takes the space that's left and scrolls inside the panel.
    Streamlit can't size a scrolling container to the screen, hence the CSS. */
-.st-key-panel_chat { flex: none !important; height: calc(100dvh - 7.5rem); min-height: 26rem; }
+.st-key-panel_chat { flex: none !important; height: calc(100dvh - 10.5rem); min-height: 26rem; }
 [data-testid="stLayoutWrapper"]:has(> .st-key-chat_messages) { flex: 1 1 0 !important; min-height: 0; height: auto !important; }
 @media (min-width: 641px) {
-  .st-key-panel_representative, .st-key-panel_admin { flex: none !important; height: calc(100dvh - 7.5rem); min-height: 26rem; }
+  .st-key-panel_representative, .st-key-panel_admin { flex: none !important; height: calc(100dvh - 10.5rem); min-height: 26rem; }
   [data-testid="stLayoutWrapper"]:has(> .st-key-representative_body, > .st-key-admin_body) {
     flex: 1 1 0 !important; min-height: 0; height: auto !important; }
 }
 @media (max-width: 1200px) { .tba-chips { display: none; } }  /* the panels show the same numbers */
-@media (max-width: 640px) {  /* phones: clear Streamlit's top bar, and keep the banner to its name */
-  [data-testid="stMainBlockContainer"] { padding-top: 4rem; }
-  .st-key-panel_chat { height: calc(100dvh - 10rem); }
+@media (max-width: 640px) {  /* phones: keep the banner to its name, and clear Streamlit Cloud's corner badges */
+  [data-testid="stMainBlockContainer"] { padding-bottom: 4rem; }
+  .st-key-panel_chat { height: calc(100dvh - 12rem); }
   .tba-subtitle { display: none; }
 }
 
